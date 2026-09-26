@@ -1,0 +1,6 @@
+- закрыть процесс Rangers.exe ("C:\Games\Steam\steamapps\common\Space Rangers HD A War Apart\Rangers.exe")
+- запустить процесс Rangers.exe ("C:\Games\Steam\steamapps\common\Space Rangers HD A War Apart\Rangers.exe")
+- дождаться загрузки (меньше 10 сек)
+- кликнуть Enter
+- кликнуть Enter
+- окно advanced ajustment отображается на экране
