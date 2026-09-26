@@ -32,10 +32,13 @@ const ICON_Y = 0.010;
 const PANEL_X = 188;
 const PANEL_Y = 200;
 
-const rowY = (k) => PANEL_Y + 95 + 40 * (k - 1);
+const rowY = (k) => PANEL_Y + 95 + 52 * (k - 1);          // 38 px row + 14 px separator
 const minus = (k) => ({ x: PANEL_X + 605, y: rowY(k) });
 const plus = (k) => ({ x: PANEL_X + 777, y: rowY(k) });
-const cell = (k, c) => ({ x: PANEL_X + 625 + 12 * c, y: rowY(k) });
+const cell = (k, c) => ({ x: PANEL_X + 625 + 6 * c, y: rowY(k) });
+// Toggle rows, in panel coordinates: row 8 comes after seven 38 px rows and their separators, so its
+// two values sit at panel y 444 and 461.
+const enumValue = (panelY) => ({ x: PANEL_X + 340, y: PANEL_Y + panelY + 10 });
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const log = (...a) => console.log('[slider]', ...a);
@@ -47,6 +50,11 @@ const tryRun = (c, a) => {
     return false;
   }
 };
+// Without the game in the foreground the window stops rendering and synthetic clicks land on
+// whatever is on top, so every frame comes out identical.
+const focusGame = () =>
+  tryRun('powershell', ['-NoProfile', '-Command',
+    "(New-Object -ComObject WScript.Shell).AppActivate('Rangers') | Out-Null"]);
 
 async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -93,40 +101,28 @@ async function main() {
   await app.pressKey('Return');
   await sleep(AFTER_ENTER_MS);
 
-  log('5/5 open the form and drive row 5 (CoalAggro) and row 1 (KlingStrength)');
+  log('5/5 open the form and drive row 5 (CoalAggro) and row 8 (ZeroStartExp)');
+  focusGame();
   await app.click({ x: Math.round(W * ICON_X), y: Math.round(H * ICON_Y) });
   await sleep(AFTER_CLICK_MS + 600);
   await shot('0_open');
+  focusGame();
 
-  // Drag the strip: press at the left end, move right, release — the value must follow the pointer,
-  // not stay at the press cell.
-  await app.drag({ fromX: 810, fromY: rowY(5), toX: 880, toY: rowY(5), steps: 24, durationMs: 700 });
-  await sleep(AFTER_CLICK_MS);
-  await shot('drag1');
+  // Click straight on the round blue switch icons — value 0 occupies panel y 444-461, value 1 the
+  // 461-478 line — rather than anywhere in the middle of the row.
+  const icon = (panelY) => ({ x: PANEL_X + 732, y: PANEL_Y + panelY + 8 });
 
-  await app.drag({ fromX: 880, fromY: rowY(5), toX: 945, toY: rowY(5), steps: 24, durationMs: 700 });
-  await sleep(AFTER_CLICK_MS);
-  await shot('drag2');
+  // Hard check: click value 0, then close and reopen the form. On reopen AARefresh reads the save
+  // again, so the switch state in `reopen_v0` shows whether the click really wrote the byte.
+  await clickAt(icon(444));
+  await shot('enum_v0');
 
-  // A plain click (no movement) must set the value of the cell under the pointer.
-  await clickAt({ x: 845, y: rowY(5) });
-  await shot('click1');
-
-  await clickAt({ x: 913, y: rowY(5) });
-  await shot('click2');
-
-  // After a drag the flag stays up until the pointer leaves the track: moving back over it (no
-  // press) keeps writing, and once the pointer has left, moving over it again writes nothing.
-  await app.rightClick({ x: 845, y: rowY(5) });
-  await sleep(AFTER_CLICK_MS);
-  await shot('hover_inside');
-
-  await app.rightClick({ x: 400, y: 760 });
-  await sleep(AFTER_CLICK_MS);
-
-  await app.rightClick({ x: 880, y: rowY(5) });
-  await sleep(AFTER_CLICK_MS);
-  await shot('hover_after_leave');
+  await clickAt({ x: 1010, y: 905 });
+  await sleep(1500);
+  focusGame();
+  await clickAt({ x: Math.round(W * ICON_X), y: Math.round(H * ICON_Y) });
+  await sleep(2000);
+  await shot('reopen_v0');
 
   await computer.close();
 }
