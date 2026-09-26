@@ -1,0 +1,28 @@
+mod: ModConfig
+
+# public — keys match ModuleInfo.txt; rendered into the card README.md (generate_card.py)
+info:
+  Name: ModConfig
+  Author: ringill
+  Conflict: ""
+  Dependence: ""
+  Priority: 5
+  Section: Разное
+  SectionEng: Miscellaneous
+  Languages: Rus,Eng
+  SmallDescription: |-
+    Скелет мода настроек: одна кнопка в левом верхнем углу космоса,
+    по нажатию открывается окно настроек.
+  SmallDescriptionEng: >-
+    Skeleton of a settings mod: one button in the upper-left corner of space opens a settings window
+  FullDescription: |-
+    Скелет: в космосе в левом верхнем углу — одна кнопка (молоток), по нажатию открывается окно настроек.
+    Наполнение окна появится позже.
+  FullDescriptionEng: |-
+    Skeleton: one button (hammer) in the upper-left corner of space; clicking it opens a settings window.
+    The window's content will be filled in later.
+
+# public — what this edition changed / added; linked from the card README.md
+changes:
+  - Skeleton only: one open button plus an (empty) settings window; the hub logic is not implemented yet.
+  - No custom art: the open button reuses the game's sort icon (`Bm.FormRating2.2SortDown`).

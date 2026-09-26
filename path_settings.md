@@ -1,0 +1,5 @@
+- закрыть процесс Rangers.exe ("C:\Games\Steam\steamapps\common\Space Rangers HD A War Apart\Rangers.exe")
+- запустить процесс Rangers.exe ("C:\Games\Steam\steamapps\common\Space Rangers HD A War Apart\Rangers.exe")
+- дождаться загрузки (меньше 10 сек)
+- кликнуть Options (мышью)
+- получить скриншот и сохранить в C:\Users\ringill\repo\space_rangers\workshop\ModConfig\ethalon.png
