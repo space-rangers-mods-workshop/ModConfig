@@ -1,0 +1,565 @@
+# Advanced adjustment — a schematic map of the game's extended new-game panel.
+#
+# Sources, in order of authority:
+#   * the form's own code, `source/SpaceRangersHD_decomp/source/screens/fGameSettings2.pas` —
+#     the three groups, their order, the slider bounds and the value/caption pairs;
+#   * `TGalaxyCustomRules` (`source/.../game/aGalaxyStruct.pas:380`) — the parameter names and the
+#     byte offsets;
+#   * the game's `Lang.dat` block `FormGameSet2.Extended` — the captions.
+#
+# `id` is the byte offset inside `Galaxy.CustomRules`; it is also how the value is stored in the
+# save (`Galaxy + 392 + id`), and it is the same numbering the game's own `AATypes` block uses.
+#
+# `after_start` says whether the parameter can still be changed once the game has started:
+#   live   — the engine reads the value during play, so changing it in a running galaxy works;
+#   locked — the engine reads it only while a new galaxy is generated, so changing it mid-game
+#            has no effect (the byte is simply never consulted again).
+#
+# `type`:
+#   number — a slider. `min`/`max` are the bounds of the value stored in the galaxy (not of the
+#            slider handle); `display` gives how it is shown;
+#   enum   — a choice. `values` lists the stored byte and the caption key for each option.
+
+master:
+  param: Enabled
+  id: 0
+  caption: FormGameSet2.Extended.Button
+  text: Advanced adjustment
+  type: enum
+  values:
+    - value: 0
+      caption: FormGameSet2.Extended.Off
+      text: "OFF"
+    - value: 1
+      caption: FormGameSet2.Extended.On
+      text: "ON"
+  after_start: live
+  note: >-
+    Gates every other option: when it is off, the engine's own accessors return their defaults and
+    none of the parameters below has any effect.
+
+categories:
+  - key: balance
+    caption: FormGameSet2.Extended.ButGroup0
+    text: Balance
+    items:
+      - param: KlingStrength
+        id: 1
+        caption: FormGameSet2.Extended.ParameterNames.KlingStrength
+        text: Dominator equipment
+        type: number
+        min: 0
+        max: 72
+        step: 1
+        default: 0
+        display: "50% + 6.25% per unit (0 → 50%, 72 → 500%)"
+        after_start: live
+        note: the new-game screen has one more slot before 0 — "Auto" — which is not stored.
+
+      - param: KlingAggro
+        id: 2
+        caption: FormGameSet2.Extended.ParameterNames.KlingAggro
+        text: Dominator aggression
+        type: number
+        min: 0
+        max: 72
+        step: 1
+        default: 0
+        display: "50% + 6.25% per unit (0 → 50%, 72 → 500%)"
+        after_start: live
+
+      - param: KlingSpawn
+        id: 3
+        caption: FormGameSet2.Extended.ParameterNames.KlingSpawn
+        text: Dominator reproduction speed
+        type: number
+        min: 0
+        max: 72
+        step: 1
+        default: 0
+        display: "50% + 6.25% per unit (0 → 50%, 72 → 500%)"
+        after_start: live
+
+      - param: PirateAggro
+        id: 4
+        caption: FormGameSet2.Extended.ParameterNames.PirateAggro
+        text: Pirate aggression
+        type: number
+        min: 0
+        max: 72
+        step: 1
+        default: 0
+        display: "50% + 6.25% per unit (0 → 50%, 72 → 500%)"
+        after_start: live
+
+      - param: CoalAggro
+        id: 5
+        caption: FormGameSet2.Extended.ParameterNames.CoalAggro
+        text: Coalition level of activity
+        type: number
+        min: 0
+        max: 24
+        step: 1
+        default: 8
+        display: "50% + 6.25% per unit (0 → 50%, 24 → 200%)"
+        after_start: live
+
+      - param: ExtraInventions
+        id: 8
+        caption: FormGameSet2.Extended.ParameterNames.ExtraInventions
+        text: Bonus to starting technologies
+        type: number
+        min: 0
+        max: 255
+        step: 1
+        default: 0
+        display: plain number
+        after_start: locked
+        note: read once, in `TPlanet_InitGenerated`, while the systems are being built.
+
+      - param: ExtraRangers
+        id: 16
+        caption: FormGameSet2.Extended.ParameterNames.ExtraRangers
+        text: Number of extra rangers
+        type: number
+        min: 0
+        max: 50
+        step: 1
+        default: 0
+        display: plain number
+        after_start: live
+
+      - param: ZeroStartExp
+        id: 25
+        caption: FormGameSet2.Extended.ParameterNames.ZeroStartExp
+        text: Pirates, civilian and combat ships appear
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.ZeroStartExpNo
+            text: With some starting experience
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.ZeroStartExpYes
+            text: Without starting experience
+        after_start: live
+        note: the stored value is the inverse of what the caption spells out.
+
+      - param: KlingRacialWeapons
+        id: 27
+        caption: FormGameSet2.Extended.ParameterNames.KlingRacialWeapons
+        text: Special equipment, developed by other series, rank-and-file dominators
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.KlingRacialWeaponsNo
+            text: Available
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.KlingRacialWeaponsYes
+            text: Not available
+        after_start: live
+
+      - param: MaxRangeMissiles
+        id: 29
+        caption: FormGameSet2.Extended.ParameterNames.MaxRangeMissiles
+        text: Computer-controlled ships fire missiles and torpedoes
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.MaxRangeMissilesNo
+            text: From medium distance
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.MaxRangeMissilesYes
+            text: From maximum distance
+        after_start: live
+
+      - param: HullGrowth
+        id: 35
+        caption: FormGameSet2.Extended.ParameterNames.HullGrowth
+        text: Hull size in shops
+        type: enum
+        values:
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.HullGrowthNormal
+            text: Increases with player's hull size
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.HullGrowthSlow
+            text: Slowly increases with player's hull size
+          - value: 2
+            caption: FormGameSet2.Extended.ParameterNames.HullGrowthTechOnly
+            text: Is limited by tech level
+        after_start: live
+
+  - key: galaxy
+    caption: FormGameSet2.Extended.ButGroup1
+    text: Galaxy
+    items:
+      - param: AsteroidMod
+        id: 6
+        caption: FormGameSet2.Extended.ParameterNames.AsteroidMod
+        text: Number of asteroids
+        type: number
+        min: 0
+        max: 24
+        step: 1
+        default: 8
+        display: "50% + 6.25% per unit (0 → 50%, 24 → 200%)"
+        after_start: locked
+        note: read once, in `TStar_GenerateSystemContents`.
+
+      - param: SunDamageMod
+        id: 7
+        caption: FormGameSet2.Extended.ParameterNames.SunDamageMod
+        text: Damage from stars
+        type: number
+        min: 0
+        max: 24
+        step: 1
+        default: 8
+        display: "50% + 6.25% per unit (0 → 50%, 24 → 200%)"
+        after_start: live
+
+      - param: AgPlanets
+        id: 13
+        caption: FormGameSet2.Extended.ParameterNames.PlanetsAg
+        text: Relative concentration of agrarian planets in the Galaxy
+        type: number
+        min: 0
+        max: 10
+        step: 1
+        default: 5
+        display: plain number
+        after_start: locked
+        note: >-
+          read once, in `TPlanet_InitGenerated`; if all three planet weights are zero the engine
+          falls back to one each.
+
+      - param: MiPlanets
+        id: 14
+        caption: FormGameSet2.Extended.ParameterNames.PlanetsMi
+        text: Relative concentration of mixed economy planets in the Galaxy
+        type: number
+        min: 0
+        max: 10
+        step: 1
+        default: 5
+        display: plain number
+        after_start: locked
+
+      - param: InPlanets
+        id: 15
+        caption: FormGameSet2.Extended.ParameterNames.PlanetsIn
+        text: Relative concentration of industrial planets in the Galaxy
+        type: number
+        min: 0
+        max: 10
+        step: 1
+        default: 5
+        display: plain number
+        after_start: locked
+
+      - param: StartCenter
+        id: 28
+        caption: FormGameSet2.Extended.ParameterNames.StartCenter
+        text: Location of the player's starting system
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.StartCenterNo
+            text: In a far corner
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.StartCenterYes
+            text: In the center
+        after_start: locked
+        note: read once, when the new game picks the player's start star.
+
+  - key: misc
+    caption: FormGameSet2.Extended.ButGroup2
+    text: Misc
+    items:
+      - param: RndChaotic
+        id: 20
+        caption: FormGameSet2.Extended.ParameterNames.Rnd
+        text: Results of random events
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.RndDetermined
+            text: Does not change when loading a saved game
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.RndChaotic
+            text: Changes when loading a saved game
+        after_start: live
+        note: control name in the form is `RndType`, the config key is `RndChaotic`.
+
+      - param: RuinsNearStars
+        id: 22
+        caption: FormGameSet2.Extended.ParameterNames.RuinsPosition
+        text: Construction of stations
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.RuinsPositionNormal
+            text: In a random spot in the system
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.RuinsPositionNear
+            text: Close to center
+        after_start: live
+        note: control name `RuinsPosition`, config key `RuinsNearStars`.
+
+      - param: RuinsTargettingFull
+        id: 23
+        caption: FormGameSet2.Extended.ParameterNames.RuinsTargetting
+        text: Far from the player's station
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.RuinsTargettingLimited
+            text: Skip fire
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.RuinsTargettingFull
+            text: Fight normally
+        after_start: live
+        note: control name `RuinsTargetting`, config key `RuinsTargettingFull`.
+
+      - param: RuinsUseShop
+        id: 33
+        caption: FormGameSet2.Extended.ParameterNames.RuinsUseShop
+        text: Space stations can receive new equipment
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.RuinsUseShopNo
+            text: Only with the player's help
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.RuinsUseShopYes
+            text: From own store
+        after_start: live
+
+      - param: SpecialShipsInGame
+        id: 24
+        caption: FormGameSet2.Extended.ParameterNames.SpecialShips
+        text: Old unique hulls (Boline, Assassin, Rock)
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.SpecialShipsNo
+            text: Absent from the game
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.SpecialShipsYes
+            text: Exist in the game
+        after_start: live
+        note: control name `SpecialShipsInGame`, config key `SpecialShips`.
+
+      - param: AkrinMod
+        id: 9
+        caption: FormGameSet2.Extended.ParameterNames.AkrinMod
+        text: Amount of acrynic goods in store
+        type: number
+        min: 0
+        max: 100
+        step: 1
+        default: 30
+        display: plain percent (0% → 100%)
+        after_start: live
+
+      - param: NodeDropMod
+        id: 10
+        caption: FormGameSet2.Extended.ParameterNames.NodeDropMod
+        text: Amount of nodes dropped by dominators
+        type: number
+        min: 0
+        max: 24
+        step: 1
+        default: 8
+        display: "50% + 6.25% per unit (0 → 50%, 24 → 200%)"
+        after_start: locked
+        note: read once, in `TKling.InitBlazer`, while the dominator series is set up.
+
+      - param: EqKnowledgeUnRestricted
+        id: 21
+        caption: FormGameSet2.Extended.ParameterNames.EqKnowledge
+        text: Equipment usage and repair is
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.EqKnowledgeRestricted
+            text: Limited by tech level
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.EqKnowledgeUnRestricted
+            text: Unlimited
+        after_start: live
+        note: control name `EqKnowledgeType`, config key `EqKnowledgeUnRestricted`.
+
+      - param: DropValueMod
+        id: 12
+        caption: FormGameSet2.Extended.ParameterNames.DropValueMod
+        text: Maximum cost of dropped items
+        type: number
+        min: 0
+        max: 24
+        step: 1
+        default: 8
+        display: "50% + 6.25% per unit (0 → 50%, 24 → 200%)"
+        after_start: live
+
+      - param: ABDropValueMod
+        id: 11
+        caption: FormGameSet2.Extended.ParameterNames.ABDropValueMod
+        text: Quality of equipment dropped by enemies in black holes
+        type: number
+        min: 0
+        max: 24
+        step: 1
+        default: 8
+        display: "50% + 6.25% per unit (0 → 50%, 24 → 200%)"
+        after_start: live
+
+      - param: ABHitpointsMod
+        id: 17
+        caption: FormGameSet2.Extended.ParameterNames.ABHitpointsMod
+        text: Enemy endurance in black holes
+        type: number
+        min: 0
+        max: 24
+        step: 1
+        default: 8
+        display: "50% + 6.25% per unit (0 → 50%, 24 → 200%)"
+        after_start: live
+
+      - param: ABDamageMod
+        id: 18
+        caption: FormGameSet2.Extended.ParameterNames.ABDamageMod
+        text: Enemy damage in black holes
+        type: number
+        min: 0
+        max: 24
+        step: 1
+        default: 8
+        display: "50% + 6.25% per unit (0 → 50%, 24 → 200%)"
+        after_start: live
+
+      - param: ABattleRoyale
+        id: 26
+        caption: FormGameSet2.Extended.ParameterNames.ABattleRoyale
+        text: Enemies in black holes
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.ABattleRoyaleNo
+            text: Acting together
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.ABattleRoyaleYes
+            text: Feuding
+        after_start: live
+
+      - param: ABChangeEq
+        id: 36
+        caption: FormGameSet2.Extended.ParameterNames.ABChangeEq
+        text: Changing equipment in black holes
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.ABChangeEqNo
+            text: Not allowed
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.ABChangeEqYes
+            text: Allowed
+        after_start: live
+
+      - param: AITolerateJunk
+        id: 19
+        caption: FormGameSet2.Extended.ParameterNames.AITolerateJunk
+        text: Amount of objects in the system after which the pilots begin to shoot them down
+        type: number
+        min: 0
+        max: 50
+        step: 1
+        default: 7
+        display: plain number
+        after_start: live
+
+      - param: OldHyper
+        id: 30
+        caption: FormGameSet2.Extended.ParameterNames.OldHyper
+        text: Battles with hyper-pirates when traveling between systems
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.OldHyperNo
+            text: "OFF"
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.OldHyperYes
+            text: "ON"
+        after_start: live
+
+      - param: PirateNodes
+        id: 31
+        caption: FormGameSet2.Extended.ParameterNames.PirateNodes
+        text: Sale of nodes on pirate bases
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.PirateNodesNo
+            text: "OFF"
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.PirateNodesYes
+            text: "ON"
+        after_start: live
+
+      - param: AIUseShops
+        id: 32
+        caption: FormGameSet2.Extended.ParameterNames.AIUseShops
+        text: Computer players receive equipment
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.AIUseShopsNo
+            text: Through own channels
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.AIUseShopsYes
+            text: Buy in stores
+        after_start: live
+
+      - param: DuplicateArts
+        id: 34
+        caption: FormGameSet2.Extended.ParameterNames.DuplicateArts
+        text: Equiping several artefacts of the same type is
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.DuplicateArtsNo
+            text: Disallowed
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.DuplicateArtsYes
+            text: Allowed
+        after_start: live
+
+      - param: OldSpeedCalc
+        id: 37
+        caption: FormGameSet2.Extended.ParameterNames.SpeedCalc
+        text: Ship speed formulae
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.SpeedCalcNonLinear
+            text: Non-linear
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.SpeedCalcLinear
+            text: Linear
+        after_start: live
+        note: control name `SpeedCalc`, config key `OldSpeedCalc`.
+
+      - param: OldMissileBonuses
+        id: 38
+        caption: FormGameSet2.Extended.ParameterNames.MissileBonuses
+        text: Missile weapon damage bonuses are
+        type: enum
+        values:
+          - value: 1
+            caption: FormGameSet2.Extended.ParameterNames.MissileBonusesSplit
+            text: Split between missiles in a volley
+          - value: 0
+            caption: FormGameSet2.Extended.ParameterNames.MissileBonusesNotSplit
+            text: Applied to each missile in a volley
+        after_start: live
+        note: control name `MissileBonuses`, config key `OldMissileBonuses`.

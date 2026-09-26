@@ -16,7 +16,7 @@ info:
   SmallDescriptionEng: >-
     Skeleton of a settings mod: one button in the upper-left corner of space opens a settings window
   FullDescription: |-
-    Скелет: в космосе в левом верхнем углу — одна кнопка (молоток), по нажатию открывается окно настроек.
+    Скелет: в космосе в левом верхнем углу - одна кнопка (молоток), по нажатию открывается окно настроек.
     Наполнение окна появится позже.
   FullDescriptionEng: |-
     Skeleton: one button (hammer) in the upper-left corner of space; clicking it opens a settings window.
