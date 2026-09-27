@@ -112,17 +112,27 @@ async function main() {
   // 461-478 line — rather than anywhere in the middle of the row.
   const icon = (panelY) => ({ x: PANEL_X + 732, y: PANEL_Y + panelY + 8 });
 
-  // Hard check: click value 0, then close and reopen the form. On reopen AARefresh reads the save
-  // again, so the switch state in `reopen_v0` shows whether the click really wrote the byte.
-  await clickAt(icon(444));
-  await shot('enum_v0');
+  // Close the form (its X) and reopen it: on reopen AARefresh reads the save again, so the switch
+  // state in the shot proves whether the click really wrote the byte, not just a hover.
+  const closeReopen = async (name) => {
+    await clickAt({ x: 1010, y: 905 });
+    await sleep(1500);
+    focusGame();
+    await clickAt({ x: Math.round(W * ICON_X), y: Math.round(H * ICON_Y) });
+    await sleep(2000);
+    await shot(name);
+    focusGame();
+  };
 
-  await clickAt({ x: 1010, y: 905 });
-  await sleep(1500);
-  focusGame();
-  await clickAt({ x: Math.round(W * ICON_X), y: Math.round(H * ICON_Y) });
-  await sleep(2000);
-  await shot('reopen_v0');
+  // Self-normalising: click value 1, value 0, value 1, reopening after each. If any click is a
+  // no-op the shot shows the previous value instead of the one just clicked, whatever the save held.
+  await clickAt(icon(461));
+  await shot('enum_v1');
+  await closeReopen('reopen_v1');
+  await clickAt(icon(444));
+  await closeReopen('reopen_v0');
+  await clickAt(icon(461));
+  await closeReopen('reopen_v1b');
 
   await computer.close();
 }
